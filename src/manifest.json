@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "Tab Timeout",
+  "description": "This extension allows the user to set a timeout for the current tab to close",
+  "version": "1.0",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs",
+    "storage"
+  ]
+}

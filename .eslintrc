@@ -1,0 +1,21 @@
+{
+  "parser": "babel-eslint",
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/prefer-stateless-function": 1,
+    "react/jsx-filename-extension": 0,
+    "react/require-default-props": 0,
+    "import/no-unresolved": 0,
+    "import/extensions": 0,
+    "no-console": 1
+  },
+  "extends": ["airbnb", "eslint:recommended"],
+  "globals": {
+    "chrome": true,
+    "window": true,
+    "document": true
+  }
+}
