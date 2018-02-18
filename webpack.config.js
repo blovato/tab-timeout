@@ -5,7 +5,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    popup: './src/popup.js'
+    popup: './src/popup.js',
+    background: './src/background.js',
   },
   output: {
     path: path.resolve('build'),
@@ -20,17 +21,16 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: 'css-loader'
+          use: ['css-loader', 'less-loader']
         })
       }
     ]
   },
   plugins: [
-    // create CSS file with all used styles
-    new ExtractTextPlugin('bundle.css'),
+    new ExtractTextPlugin("[name].css"),
     // create popup.html from template and inject styles and script bundles
     new HtmlWebpackPlugin({
       inject: true,

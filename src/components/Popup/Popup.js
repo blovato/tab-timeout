@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { getCurrentActiveTab } from '../lib/tabs';
-import { setTabTimeout, getTabTimeout } from '../lib/storage';
+import { getCurrentActiveTab } from '../../lib/tabs';
+import { setTabTimeout, getTabTimeout } from '../../lib/storage';
+import './popup.less';
 
 export default class Popup extends Component {
   state = {
@@ -23,7 +24,7 @@ export default class Popup extends Component {
   render() {
     const { tab, timeout } = this.state;
     return (
-      <div style={{ width: 200, height: 200 }}>
+      <div className="popup">
         <p>When would you like this active tab ({tab.title}) to timeout?</p>
         <input type="number" onChange={this.onChange} value={timeout} />
       </div>
