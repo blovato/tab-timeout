@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { getCurrentActiveTab } from '../../lib/tabs';
 import { startTabTimeout, cancelTabTimeout } from '../../lib/messages';
-import { get as getAlarm } from '../../lib/alarms';
+import { getTimeoutAlarm } from '../../lib/alarms';
 import Duration from '../Duration';
 import './popup.less';
 
@@ -14,7 +14,7 @@ export default class Popup extends Component {
 
   componentWillMount = async () => {
     const tab = await getCurrentActiveTab() || {};
-    const alarm = await getAlarm(tab.id) || {};
+    const alarm = await getTimeoutAlarm(tab.id) || {};
     this.setState({ tab, alarm });
   };
 
@@ -26,7 +26,7 @@ export default class Popup extends Component {
   onStart = async () => {
     const { tab, timeout } = this.state;
     await startTabTimeout(tab.id, timeout * 60 * 1000);
-    const alarm = await getAlarm(tab.id);
+    const alarm = await getTimeoutAlarm(tab.id);
     this.setState({ alarm });
   };
 

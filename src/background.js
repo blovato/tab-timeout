@@ -1,30 +1,47 @@
-import * as alarms from './lib/alarms';
+import {
+  startIntervalAlarm,
+  startTimeoutAlarm,
+  clearIntervalAlarm,
+  clearTimeoutAlarm,
+} from './lib/alarms';
 import { removeTab } from './lib/tabs';
 import { onMessage } from './lib/messages';
+import {
+  addBadge,
+  decrementBadge,
+  removeBadge,
+} from './lib/badge';
 
 
-const onStartTabTimeoutMessageHandler = ({ tabRemovalTimeoutStart }, sender, next) => {
+const onStartTabTimeoutMessageHandler = async ({ tabRemovalTimeoutStart }) => {
   if (tabRemovalTimeoutStart) {
     const { tabId, timeout } = tabRemovalTimeoutStart;
-    alarms
-      .timeoutInMs(tabId, timeout)
-      .then(() => removeTab(tabId))
-      .then(next);
+    // initialize badge and set interval to update the badge every minute
+    addBadge(tabId, timeout / 60 / 1000);
+    startIntervalAlarm(tabId, () => decrementBadge(tabId));
+    // start a timeout alarm for the tab to be removed
+    await startTimeoutAlarm(tabId, timeout);
+    // when timer ends remove the interval alarm for the badge
+    await clearIntervalAlarm(tabId);
+    // then remove the tab
+    await removeTab(tabId);
   }
 };
 
-const onCancelTabTimeoutMessageHandler = ({ tabRemovalTimeoutCancel }, sender, next) => {
+const onCancelTabTimeoutMessageHandler = async ({ tabRemovalTimeoutCancel }) => {
   if (tabRemovalTimeoutCancel) {
     const { tabId } = tabRemovalTimeoutCancel;
-    alarms
-      .clear(tabId)
-      .then(next);
+    // clean up badge
+    removeBadge(tabId);
+    // clean up alarms
+    await clearTimeoutAlarm(tabId);
+    await clearIntervalAlarm(tabId);
   }
 };
 
-const onMessageHandlers = [
+const messageHandlers = [
   onStartTabTimeoutMessageHandler,
   onCancelTabTimeoutMessageHandler,
 ];
 
-onMessageHandlers.forEach(fn => onMessage.addListener(fn));
+messageHandlers.forEach(fn => onMessage.addListener(fn));

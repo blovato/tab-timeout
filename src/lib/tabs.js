@@ -12,6 +12,24 @@ export const queryTabs = (query = {}) => {
 };
 
 /**
+ * Get tab by id
+ *
+ * @param tabId {Number}
+ * @return {Promise}
+ */
+export const getTabById = (tabId) => {
+  return new Promise((resolve, reject) => {
+    queryTabs().then((tabs) => {
+      const tab = tabs.find(tab => tab.id === tabId);
+      if (tab) {
+        resolve(tab);
+      }
+      reject(`No tab with id: ${tabId}`);
+    });
+  });
+};
+
+/**
  * Get the current active tab
  *
  * @return {Promise}
