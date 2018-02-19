@@ -1,10 +1,21 @@
 
+/**
+ * Query all tabs
+ *
+ * @param query {Object}
+ * @return {Promise}
+ */
 export const queryTabs = (query = {}) => {
   return new Promise((resolve) => {
     chrome.tabs.query(query, resolve);
   });
 };
 
+/**
+ * Get the current active tab
+ *
+ * @return {Promise}
+ */
 export const getCurrentActiveTab = async () => {
   const currentActive = await queryTabs({ active: true, currentWindow: true });
   if (currentActive.length) {
@@ -13,6 +24,12 @@ export const getCurrentActiveTab = async () => {
   return null;
 };
 
+/**
+ * Remove a tab by id
+ *
+ * @param tabId {Number}
+ * @return {Promise}
+ */
 export const removeTab = (tabId) => {
   return new Promise((resolve) => {
     chrome.tabs.remove(tabId, resolve);

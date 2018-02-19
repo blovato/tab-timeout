@@ -8,7 +8,7 @@
   },
   "permissions": [
     "tabs",
-    "storage"
+    "alarms"
   ],
   "background": {
     "scripts": ["background.js"],
