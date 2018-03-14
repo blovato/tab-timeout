@@ -1,13 +1,19 @@
 
-export const getTimeoutAlarmName = (tabId) => `tab:${tabId}-timeout-alarm`;
-export const getIntervalAlarmName = (tabId) => `tab:${tabId}-interval-alarm`;
+export const getTimeoutAlarmName = tabId => `${tabId}-timeout-alarm`;
+export const getIntervalAlarmName = tabId => `${tabId}-interval-alarm`;
+
+export const getTabIdFromAlarmName = name => Number.parseInt(name.slice(0, name.indexOf('-')));
+
+export const isTimeoutAlarm = name => name.includes('-timeout-alarm');
+export const isIntervalAlarm = name => name.includes('-interval-alarm');
+
 /**
  * Create a new alarm
  *
  * @param name {String}
  * @param options {Object}
  */
-export const create = (name, options = {}) => {
+export const createAlarm = (name, options = {}) => {
   chrome.alarms.create(name+'', options);
 };
 
@@ -17,7 +23,7 @@ export const create = (name, options = {}) => {
  * @param name {String}
  * @return {Promise}
  */
-export const get = (name) => {
+export const getAlarm = (name) => {
   return new Promise((resolve) => {
     chrome.alarms.get(name+'', resolve);
   });
@@ -31,7 +37,7 @@ export const get = (name) => {
  */
 export const getTimeoutAlarm = (tabId) => {
   const name = getTimeoutAlarmName(tabId);
-  return get(name);
+  return getAlarm(name);
 };
 
 /**
@@ -40,7 +46,7 @@ export const getTimeoutAlarm = (tabId) => {
  * @param name {String}
  * @return {Promise}
  */
-export const clear = (name) => {
+export const clearAlarm = (name) => {
   return new Promise((resolve, reject) => {
     chrome.alarms.clear(name, (wasCleared) => {
       if (wasCleared) {
@@ -59,7 +65,7 @@ export const clear = (name) => {
  */
 export const clearIntervalAlarm = (tabId) => {
   const intervalAlarmName = getIntervalAlarmName(tabId);
-  return clear(intervalAlarmName);
+  return clearAlarm(intervalAlarmName);
 };
 
 /**
@@ -70,51 +76,5 @@ export const clearIntervalAlarm = (tabId) => {
  */
 export const clearTimeoutAlarm = (tabId) => {
   const timeoutAlarmName = getTimeoutAlarmName(tabId);
-  return clear(timeoutAlarmName);
-};
-
-/**
- * Register a one time alarm event,
- * The promise will resolve if the alarm name is called
- *
- * @param name {String}
- * @return {Promise}
- */
-export const onceAlarm = (name) => {
-  return new Promise((resolve) => {
-    chrome.alarms.onAlarm.addListener((alarm) => {
-      if (alarm.name === name) {
-        resolve(alarm);
-      }
-    });
-  });
-};
-
-/**
- * Create a new alarm and register a one time callback for it
- *
- * @param tabId {String}
- * @param delayInMs {Number}
- * @return {Promise}
- */
-export const startTimeoutAlarm = (tabId, delayInMs) => {
-  const name = getTimeoutAlarmName(tabId);
-  create(name, { when: Date.now() + delayInMs });
-  return onceAlarm(name);
-};
-
-/**
- * Create a reoccurring alarm and register a callback for it
- *
- * @param tabId {Number}
- * @param callback {Function}
- */
-export const startIntervalAlarm = (tabId, callback) => {
-  const name = getIntervalAlarmName(tabId);
-  create(name, { periodInMinutes: 1 });
-  chrome.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === name) {
-      callback(alarm);
-    }
-  });
+  return clearAlarm(timeoutAlarmName);
 };

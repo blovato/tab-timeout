@@ -33,5 +33,3 @@ export const startTabTimeout = (tabId, timeout) => {
 export const cancelTabTimeout = (tabId) => {
   return sendMessage({ tabRemovalTimeoutCancel: { tabId } });
 };
-
-export const { onMessage } = chrome.runtime;
